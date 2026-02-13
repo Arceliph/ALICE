@@ -88,6 +88,11 @@ def ALICE():
     async def furina(ctx):
         await api_methods.furina_api(ctx)
 
+    #Access Safebooru's API and pull a random Hu Tao image
+    @bot.command()
+    async def hutao(ctx):
+        await api_methods.hu_tao_api(ctx)
+
 
     bot.run(token, log_handler=handler, log_level=logging.DEBUG)
 

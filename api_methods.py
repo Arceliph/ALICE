@@ -87,3 +87,34 @@ async def furina_api(ctx, id_num=None):
                     print(f"Resizing Image {furina_img_number}")
                     furina_image_data = resize_image_bytes(furina_image_data, DISCORD_SIZE_LIMIT_BYTES)
                 await ctx.send(file=discord.File(furina_image_data, f"random_furina_{furina_img_number}.jpg"))
+
+
+async def hu_tao_api(ctx, id_num=None):
+    #TODO: Add command options for searching artwork from Safebooru
+    random_limit = random.randint(0, 66)
+    url = f"https://safebooru.org/index.php?page=dapi&s=post&q=index&tags=hu_tao_(genshin_impact)&pid={random_limit}"
+    if id_num:
+        url = f"https://safebooru.org/index.php?page=dapi&s=post&q=index&id={id_num}"
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as hu_tao_request:
+            if hu_tao_request.status != 200:
+                return await ctx.send(f"Safebooru API failed with HTTP Status {hu_tao_request.status}")
+        
+            hu_tao_xml_data = await hu_tao_request.read()
+            root = ET.fromstring(hu_tao_xml_data)
+
+            random_index = random.randint(0, 99)
+            if id_num:
+                random_index = 0
+            root_post = root.findall("post")[random_index]
+            hu_tao_img_loc = root_post.attrib.get("file_url")
+            #hu_tao_img_height = (int) (root_post.attrib.get("height"))
+            #hu_tao_img_width = (int) (root_post.attrib.get("width"))
+            hu_tao_img_number = random_limit * 100 + random_index
+            
+            async with session.get(hu_tao_img_loc) as hu_tao_image_request:
+                hu_tao_image_data = io.BytesIO(await hu_tao_image_request.read())
+                if len(hu_tao_image_data.getvalue()) >= DISCORD_SIZE_LIMIT_BYTES:
+                    print(f"Resizing Image {hu_tao_img_number}")
+                    hu_tao_image_data = resize_image_bytes(hu_tao_image_data, DISCORD_SIZE_LIMIT_BYTES)
+                await ctx.send(file=discord.File(hu_tao_image_data, f"random_hu_tao_{hu_tao_img_number}.jpg"))
