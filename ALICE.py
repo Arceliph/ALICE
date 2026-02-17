@@ -19,6 +19,8 @@ def ALICE():
     bot = commands.Bot(command_prefix='!', intents=intents)
     role="Red"
 
+    api_toolkit = api_methods.api_methods()
+
 
     @bot.event
     async def on_ready():
@@ -81,17 +83,21 @@ def ALICE():
     #Access Randomfox API to display an image of a random fox
     @bot.command()
     async def fox(ctx):
-        await api_methods.fox_api(ctx)
+        await api_toolkit.fox_api(ctx)
         
     #Access Safebooru's API and pull a random Furina image
     @bot.command()
     async def furina(ctx):
-        await api_methods.furina_api(ctx)
+        await api_toolkit.furina_api(ctx)
 
     #Access Safebooru's API and pull a random Hu Tao image
     @bot.command()
     async def hutao(ctx):
-        await api_methods.hu_tao_api(ctx)
+        await api_toolkit.hu_tao_api(ctx)
+
+    @bot.command()
+    async def arizona(ctx):
+        await api_toolkit.arizona_api(ctx)
 
 
     bot.run(token, log_handler=handler, log_level=logging.DEBUG)
